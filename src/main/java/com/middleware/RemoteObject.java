@@ -1,24 +1,13 @@
 package com.middleware;
 
-
-import lombok.extern.slf4j.Slf4j;
-import com.middleware.communication.ResponseMessage;
-import org.json.JSONObject;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
-
-
-/* Remote objects have a unique OBJECT ID in their local address space, as
-	well as a means to construct an ABSOLUTE OBJECT REFERENCE . The ABSO -
-	LUTE OBJECT REFERENCE is used to reference and subsequently access a
-	remote object across the network.
-*/
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
+import com.middleware.communication.ResponseMessage;
 
 @Slf4j
 public class RemoteObject {
-
     private Object id;
     private Method method;
     private Object instance;
@@ -55,7 +44,6 @@ public class RemoteObject {
         this.instance = instance;
     }
 
-    //Mudar a forma de exibição do erro
     public void activate() {
         Class<?> clazz = this.method.getDeclaringClass();
         try {
@@ -83,9 +71,8 @@ public class RemoteObject {
         } catch (Exception exception) {
             log.error(exception.getMessage());
             JSONObject response = new JSONObject();
-            response.append("Error: ", "An error occurred while processing the method.");
+            response.append("ERROR: ", "An error occurred while processing the method.");
             return new ResponseMessage("500", "Internal Server Error", response.toString());
         }
     }
-
 }

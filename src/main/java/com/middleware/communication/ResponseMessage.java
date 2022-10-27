@@ -1,14 +1,38 @@
 package com.middleware.communication;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ResponseMessage {
-    private String httpCode;
-    private String httpMessage;
+    private String httpcode;
+    private String httpmessage;
     private String content;
+
+    public ResponseMessage(){}
+
+    public ResponseMessage(String httpcode, String httpmessage, String content){
+        this.httpcode = httpcode;
+        this.httpmessage = httpmessage;
+        this.content = content;
+    }
+
+    public String getHttpCode(){
+        return httpcode;
+    }
+
+    public void setHttpCode(String httpcode){
+        this.httpcode = httpcode;
+    }
+
+    public String getHttpMessage(){
+        return httpmessage;
+    }
+
+    public void setHttpMessage(String httpmessage){
+        this.httpmessage = httpmessage;
+    }
+
+    public String getContent(){
+        return content;
+    }
+
+    public void setContent(String content){
+        this.content = content;
+    }
 }
