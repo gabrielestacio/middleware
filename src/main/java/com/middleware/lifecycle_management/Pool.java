@@ -10,19 +10,19 @@ import com.middleware.RemoteObject;
 public class Pool {
     private List<RemoteObject> instances;
     private Lock lock;
-    private Condition is_empty;
+    private Condition empty;
 
-    public Pool(RemoteObject remoteObject, int number) {
+    public Pool(RemoteObject remote_obj, int number) {
         this.instances = new ArrayList<RemoteObject>();
         for (int i = 0; i < number; i++) {
-            this.addPoolInstance(remoteObject);
+            this.addPoolInstance(remote_obj);
         }
         this.lock = new ReentrantLock(true);
-        this.is_empty = this.lock.newCondition();
+        this.empty = this.lock.newCondition();
     }
 
-    public void addPoolInstance(RemoteObject remoteObject) {
-        this.instances.add(new RemoteObject(remoteObject.getId(), remoteObject.getMethod()));
+    public void addPoolInstance(RemoteObject remote_obj) {
+        this.instances.add(new RemoteObject(remote_obj.getId(), remote_obj.getMethod()));
     }
 
     public RemoteObject getFreeInstance() {
@@ -30,7 +30,7 @@ public class Pool {
         this.lock.lock();
         try {
             while(this.instances.size() == 0) {
-                is_empty.await();
+                empty.await();
             }
             remote_object = instances.get(0);
         } catch (InterruptedException interrupted_exception) {
@@ -54,7 +54,7 @@ public class Pool {
         this.lock.lock();
         try {
             this.instances.add(remoteObject);
-            this.is_empty.signal();
+            this.empty.signal();
         } finally {
             this.lock.unlock();
         }

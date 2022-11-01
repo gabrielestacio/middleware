@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import com.middleware.communication.ResponseMessage;
+import com.middleware.communication.Response;
 
 @Slf4j
 public class RemoteObject {
@@ -63,16 +63,16 @@ public class RemoteObject {
         this.instance = null;
     }
 
-    public ResponseMessage executeOperation(JSONObject json_object) {
+    public Response executeOperation(JSONObject json_object) {
         try {
             JSONObject json = (JSONObject) this.method.invoke(this.instance, json_object);
-            ResponseMessage message = new ResponseMessage("200", "OK", json.toString());
+            Response message = new Response("200", "OK", json.toString());
             return message;
-        } catch (Exception exception) {
-            log.error(exception.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
             JSONObject response = new JSONObject();
             response.append("ERROR: ", "An error occurred while processing the method.");
-            return new ResponseMessage("500", "Internal Server Error", response.toString());
+            return new Response("500", "Internal Server Error", response.toString());
         }
     }
 }

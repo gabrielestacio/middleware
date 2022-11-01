@@ -12,8 +12,8 @@ public class OptimizedStatic extends Static {
     }
 
     @Override
-    public RemoteObject invocationArrived(Object remoteobj_id) {
-        RemoteObject remote_obj = this.remote_objects.get(remoteobj_id);
+    public RemoteObject invocationArrived(Object id) {
+        RemoteObject remote_obj = this.remote_objects.get(id);
         if (remote_obj.getInstance() == null) {
             remote_obj.activate();
         }

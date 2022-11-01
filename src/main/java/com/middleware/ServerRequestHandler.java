@@ -8,9 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import com.middleware.communication.InternalMessage;
-import com.middleware.communication.ResponseMessage;
 import com.middleware.communication.Message;
+import com.middleware.communication.Response;
+import com.middleware.communication.MessageType;
 
 @Slf4j
 public class ServerRequestHandler {
@@ -26,10 +26,10 @@ public class ServerRequestHandler {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() / 2);
         try {
             log.info("Server Request Handler Started - Port: " + port);
-            ServerSocket server_socket = new ServerSocket(port);
+            ServerSocket socket = new ServerSocket(port);
             while (true) {
                 log.info("It's time for the client requests!");
-                Socket remote = server_socket.accept();
+                Socket remote = socket.accept();
                 log.info("Done.");
                 executor.execute(new ServerHandler(remote));
             }
@@ -54,10 +54,10 @@ public class ServerRequestHandler {
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-                InternalMessage request = marshaller.unMarshall(in);
-                ResponseMessage message = new ResponseMessage();
+                Message request = marshaller.demarshall(in);
+                Response message = new Response();
 
-                if (request.getType().equals(Message.ERROR)) {
+                if (request.getType().equals(MessageType.ERROR)) {
                     log.warn("Server Handler could not interpret request.");
                     message.setHttpCode("400");
                     message.setHttpMessage("Bad Request");
@@ -82,7 +82,7 @@ public class ServerRequestHandler {
 
         }
 
-        private ResponseMessage handleRequest(InternalMessage intern_message) {
+        private Response handleRequest(Message intern_message) {
             try {
                 Invoker invoker = new Invoker();
                 return invoker.invokeRemoteObject(intern_message);
@@ -90,7 +90,7 @@ public class ServerRequestHandler {
                 log.error("ERROR: Failed to recover data from package.");
                 JSONObject response = new JSONObject();
                 response.append("ERROR: ", "An error ocurred when receiving the package.");
-                return new ResponseMessage("500", "Internal Server Error", response.toString());
+                return new Response("500", "Internal Server Error", response.toString());
             }
         }
     }

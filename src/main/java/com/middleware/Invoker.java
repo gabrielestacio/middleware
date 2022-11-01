@@ -1,21 +1,26 @@
 package com.middleware;
 
 import java.lang.reflect.InvocationTargetException;
-import com.middleware.communication.InternalMessage;
-import com.middleware.communication.ResponseMessage;
+
+import org.json.JSONObject;
+
+import com.middleware.communication.Message;
+import com.middleware.communication.Response;
 import com.middleware.lifecycle_management.LifecycleManager;
 import com.middleware.lifecycle_management.LifecycleManagerStorage;
 
 public class Invoker {
     public Invoker(){}
 
-    public ResponseMessage invokeRemoteObject(InternalMessage message) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
-        ResponseMessage response = null;
-        String remoteobj_id = message.getReference();
+    public Response invokeRemoteObject(Message message) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+        Response response = null;
+        String remoteobj_id = message.buildID();
         LifecycleManager lifecycle_manager = LifecycleManagerStorage.getLifecycleManager(remoteobj_id);
         
         if (lifecycle_manager == null) {
-            response = LocationForwarder.delegate(remoteobj_id, message.getBody());
+            JSONObject json = new JSONObject();
+            json.append("ERROR: ", "Method not found.");
+            response = new Response("404", "Not Found", json.toString());
         }
         else {
             RemoteObject object = lifecycle_manager.invocationArrived(remoteobj_id);

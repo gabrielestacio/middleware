@@ -17,16 +17,16 @@ public class PerRequest implements LifecycleManager {
     }
 
     @Override
-    public RemoteObject invocationArrived(Object remoteobj_id) {
-        RemoteObject remote_obj = this.remote_objects.get(remoteobj_id);
-        RemoteObject object = new RemoteObject(remote_obj.getId(), remote_obj.getMethod());
-        object.activate();
-        return object;
+    public RemoteObject invocationArrived(Object id) {
+        RemoteObject remote_obj = this.remote_objects.get(id);
+        RemoteObject servant = new RemoteObject(remote_obj.getId(), remote_obj.getMethod());
+        servant.activate();
+        return servant;
     }
 
     @Override
-    public void invocationDone(RemoteObject object) {
-        object.deactivate();
+    public void invocationDone(RemoteObject servant) {
+        servant.deactivate();
     }
 
 }

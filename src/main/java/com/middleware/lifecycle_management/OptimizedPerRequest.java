@@ -4,20 +4,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.middleware.RemoteObject;
 
 public class OptimizedPerRequest implements LifecycleManager {
-    private int max_pools;
+    private int maximum;
     private ConcurrentHashMap<Object, Pool> pools;
 
     public OptimizedPerRequest() {
-        this.max_pools = 1;
+        this.maximum = 1;
         this.pools = new ConcurrentHashMap<>();
     }
 
-    public int getMaxPools() {
-        return this.max_pools;
+    public int getMaximum() {
+        return this.maximum;
     }
 
-    public void setMaxPools(int max_pools) {
-        this.max_pools = max_pools;
+    public void setMaximum(int maximum) {
+        this.maximum = maximum;
     }
 
     public ConcurrentHashMap<Object, Pool> getPools(){
@@ -28,30 +28,30 @@ public class OptimizedPerRequest implements LifecycleManager {
         this.pools = pools;
     }
 
-    public void newPerRequestPool(RemoteObject remote_obj, int number_of_instances) {
-        Pool pool = new Pool(remote_obj, number_of_instances);
+    public void newPerRequestPool(RemoteObject remote_obj, int instances_qtt) {
+        Pool pool = new Pool(remote_obj, instances_qtt);
         this.pools.put(remote_obj.getId(), pool);
     }
 
     @Override
     public void newRemoteObject(RemoteObject remote_obj) {
-        this.newPerRequestPool(remote_obj, this.getMaxPools());
+        this.newPerRequestPool(remote_obj, this.getMaximum());
         LifecycleManagerStorage.newRemoteObject(remote_obj.getId(), Strategy.OPTIMIZED_PER_REQUEST);
     }
 
     @Override
-    public RemoteObject invocationArrived(Object remoteobject_id) {
-        Pool pool = this.pools.get(remoteobject_id);
-        RemoteObject object = pool.getFreeInstance();
-        pool.removeFromPool(object);
-        object.activate();
-        return object;
+    public RemoteObject invocationArrived(Object id) {
+        Pool pool = this.pools.get(id);
+        RemoteObject servant = pool.getFreeInstance();
+        pool.removeFromPool(servant);
+        servant.activate();
+        return servant;
     }
 
     @Override
-    public void invocationDone(RemoteObject object) {
-        Pool pool = this.pools.get(object.getId());
-        object.deactivate();
-        pool.putBackToPool(object);
+    public void invocationDone(RemoteObject servant) {
+        Pool pool = this.pools.get(servant.getId());
+        servant.deactivate();
+        pool.putBackToPool(servant);
     }
 }

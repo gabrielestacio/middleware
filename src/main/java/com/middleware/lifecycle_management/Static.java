@@ -18,8 +18,8 @@ public class Static implements LifecycleManager {
     }
 
     @Override
-    public RemoteObject invocationArrived(Object remoteobj_id) {
-        return this.remote_objects.get(remoteobj_id);
+    public RemoteObject invocationArrived(Object id) {
+        return this.remote_objects.get(id);
     }
 
     @Override

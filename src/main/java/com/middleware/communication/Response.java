@@ -1,12 +1,12 @@
 package com.middleware.communication;
-public class ResponseMessage {
+public class Response {
     private String httpcode;
     private String httpmessage;
     private String content;
 
-    public ResponseMessage(){}
+    public Response(){}
 
-    public ResponseMessage(String httpcode, String httpmessage, String content){
+    public Response(String httpcode, String httpmessage, String content){
         this.httpcode = httpcode;
         this.httpmessage = httpmessage;
         this.content = content;

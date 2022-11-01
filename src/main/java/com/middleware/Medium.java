@@ -27,6 +27,8 @@ public class Medium {
                 remote_object.setId("put" + clazz.getAnnotation(RequestMap.class).router() + method.getAnnotation(Put.class).router());
             } else if (method.isAnnotationPresent(Delete.class)) {
                 remote_object.setId("delete" + clazz.getAnnotation(RequestMap.class).router() + method.getAnnotation(Delete.class).router());
+            } else if (method.isAnnotationPresent(Delete.class)) {
+                remote_object.setId("patch" + clazz.getAnnotation(RequestMap.class).router() + method.getAnnotation(Patch.class).router());
             }
             method.setAccessible(true);
             remote_object.setMethod(method);
@@ -43,7 +45,7 @@ public class Medium {
             if (lifecycle_manager instanceof OptimizedPerRequest) {
                 Pool pool = method.getAnnotation(Pool.class);
                 if (pool != null) {
-                    ((OptimizedPerRequest) lifecycle_manager).setMaxPools(pool.maximum());
+                    ((OptimizedPerRequest) lifecycle_manager).setMaximum(pool.maximum());
                 }
             }
             return lifecycle_manager;
